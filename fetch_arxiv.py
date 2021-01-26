@@ -15,7 +15,7 @@ else:
     HTML_DIR = '~/Desktop'
 
 
-def query_arxiv_org(debug_mode=True):
+def query_arxiv_org(debug_mode=True, query_input=QUERY_INPUT):
     """Search for query items on arXiv and return the list of results"""
 
     def _convert_time(val):
@@ -35,7 +35,7 @@ def query_arxiv_org(debug_mode=True):
     # Base api query url
     base_url = 'http://export.arxiv.org/api/query?'
     # each search item
-    with open(QUERY_INPUT) as file:
+    with open(query_input) as file:
         search_keywords = file.readlines()
     # some options
     start = 0
@@ -65,7 +65,7 @@ def query_arxiv_org(debug_mode=True):
     return result_list
 
 
-def main(debug_mode=True):
+def main(debug_mode=True, db_output=DB_OUTPUT, html_dir=HTML_DIR, html_output=HTML_OUTPUT):
 
     if debug_mode:
         print('Beginning query: ', datetime.now())
@@ -75,7 +75,7 @@ def main(debug_mode=True):
 
     # create a new empty data frame if failed to read an existing DB with the same name
     try:
-        old_db = pd.read_pickle(DB_OUTPUT)
+        old_db = pd.read_pickle(db_output)
     except: 
         old_db = pd.DataFrame()
     
@@ -84,11 +84,11 @@ def main(debug_mode=True):
     if debug_mode:
         print('Database updated: ', datetime.now())
 
-    pd.to_pickle(updated_db, DB_OUTPUT)
+    pd.to_pickle(updated_db, db_output)
     if debug_mode:
         print('pkl written: ', datetime.now())
 
-    database_manipulation.create_html(updated_db, os.path.join(HTML_DIR, HTML_OUTPUT))
+    database_manipulation.create_html(updated_db, os.path.join(html_dir, html_output))
     print('Done writing HTML: ', datetime.now())
 
 
